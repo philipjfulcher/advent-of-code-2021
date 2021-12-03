@@ -18,6 +18,5 @@
     "baseUrl": ".",
     "suppressImplicitAnyIndexErrors": true
   },
-  "exclude": ["node_modules", "tmp"],
-  "include": ["**/*.ts"]
+  "exclude": ["node_modules", "tmp"]
 }
