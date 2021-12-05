@@ -1,6 +1,7 @@
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
-import { matrix, size, column } from "mathjs";
+import { arrayMinMax } from "../util/arrayMinMax";
+import { createMatrix } from "../util/matrix";
 
 export function run(inputFile: string) {
   let rl = createInterface({
@@ -14,38 +15,23 @@ export function run(inputFile: string) {
   });
 
   rl.on("close", () => {
-    const fuelMatrix = matrix(rows);
-    const matrixSize = fuelMatrix.size();
-    const numCols = matrixSize[1];
+    const fuelMatrix = createMatrix<number>(rows);
+    const columns = fuelMatrix.getColumns();
 
-    let gammaRateString = "";
-    let epsilonRateString = "";
+    const rateStrings = columns.reduce(
+      (columnAcc, column) => {
+        const minMax = arrayMinMax(column);
 
-    for (let i = 0; i < numCols; i++) {
-      const colValues = column(fuelMatrix, i);
+        columnAcc.gamma += minMax.max;
+        columnAcc.epsilon += minMax.min;
 
-      let zeroes = 0;
-      let ones = 0;
+        return columnAcc;
+      },
+      { gamma: "", epsilon: "" }
+    );
 
-      colValues.forEach((val) => {
-        if (val === 0) {
-          zeroes++;
-        } else {
-          ones++;
-        }
-      });
-
-      if (zeroes > ones) {
-        gammaRateString += "0";
-        epsilonRateString += "1";
-      } else {
-        gammaRateString += "1";
-        epsilonRateString += "0";
-      }
-    }
-
-    const gammaRate = parseInt(gammaRateString, 2);
-    const epsilonRate = parseInt(epsilonRateString, 2);
+    const gammaRate = parseInt(rateStrings.gamma, 2);
+    const epsilonRate = parseInt(rateStrings.epsilon, 2);
 
     console.log(`Gamma Rate: ${gammaRate}`);
     console.log(`Epsilon Rate: ${epsilonRate}`);
