@@ -10,16 +10,16 @@ export interface Matrix<CellType> {
 export function createMatrix<CellType>(data: CellType[][]): Matrix<CellType> {
   return {
     data,
-    getCellValue: function (x: number, y: number) {
+    getCellValue: function (this: Matrix<CellType>, x: number, y: number) {
       return this.data?.[x]?.[y] ?? null;
     },
     setCellValue: function (x: number, y: number, value: CellType) {
       data[x][y] = value;
     },
-    getRows: function () {
+    getRows: function (this: Matrix<CellType>) {
       return this.data;
     },
-    getColumns: function () {
+    getColumns: function (this: Matrix<CellType>) {
       const numRows = data.length;
       const numCols = data[0].length;
 
